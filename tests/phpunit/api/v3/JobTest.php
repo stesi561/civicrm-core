@@ -315,6 +315,73 @@ class api_v3_JobTest extends CiviUnitTestCase {
   }
 
   /**
+   * Tests the enable scheduled relationship job.
+   *
+   * Four cases - relationship enabled today; relationship due to be
+   * enabled tomorrow; relationship not enabled start date yesterday;
+   * relationship due to be enabled tomorrow but already enabled.
+   */
+  public function testCallEnableScheduledRelationships() {
+
+    $RelationshipDisabled = 'Go Go you good thing';
+    $RelationshipEnabled = 'Hooked';
+
+    $cases = array(
+      'is_disabled_starts_today' => array(
+        'params' => array(
+          'is_active' => 0,
+          'start_date' => 'today',
+        ),
+        'before' => $RelationshipDisabled,
+        'after' => $RelationshipEnabled,
+      ),
+      'params' => array(
+        'is_disabled_starts_tomorrow' => array(
+          'is_active' => 0,
+          'start_date' => 'tomorrow',
+        ),
+        'before' => $RelationshipDisabled,
+        'after' => $RelationshipDisabled,
+      ),
+      'is_disabled_starts_yesterday' => array(
+        'is_active' => 0,
+        'start_date' => 'yesterday',
+      ),
+      'params' => array(
+        'is_enabled_starts_tomorrow' => array(
+          'is_active' => 1,
+          'start_date' => 'tomorrow',
+        ),
+        'before' => $RelationshipEnabled,
+        'after' => $RelationshipEnabled,
+      ),
+    );
+
+    foreach ($cases as $testName=>$testData) {
+      $individualID = $this->individualCreate();
+      $orgID = $this->organizationCreate();
+      CRM_Utils_Hook_UnitTests::singleton()->setHook('civicrm_pre', array($this, 'hookPreRelationship'));
+      $relationshipTypeID = $this->callAPISuccess('relationship_type', 'getvalue', array(
+        'return' => 'id',
+        'name_a_b' => 'Employee of',
+      ));
+      $result = $this->callAPISuccess('relationship', 'create', array(
+        'relationship_type_id' => $relationshipTypeID,
+        'contact_id_a' => $individualID,
+        'contact_id_b' => $orgID,
+        'is_active' => $testData['params']['is_active'],
+        'start_date' => $testData['params']['start_date'],
+      ));
+      $relationshipID = $result['id'];
+      $this->assertEquals($testData['before'], $result['values'][$relationshipID]['description'], "Enable Scheduled relationship - {$testName} - before");
+      $result = $this->callAPISuccess($this->_entity, 'enable_scheduled_relationships', array());
+      $this->assertEquals($testData['after'], $result['values'][$relationshipID]['description'], "Enable Scheduled relationship - {$testName} - after");
+      $this->contactDelete($individualID);
+      $this->contactDelete($orgID);
+    }
+  }
+
+  /**
    * Test the batch merge function.
    *
    * We are just checking it returns without error here.

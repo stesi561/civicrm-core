@@ -670,6 +670,22 @@ function civicrm_api3_job_disable_expired_relationships($params) {
 }
 
 /**
+ * Enable scheduled relationships for which the start date is today -
+ * and are currently inactive.
+ *
+ * @param array $params
+ * @return array
+ * @throws \API_Exception
+ */
+function civicrm_api3_job_enable_scheduled_relationships($params) {
+  $result = CRM_Contact_BAO_Relationship::enableScheduledRelationships();
+  if (!$result) {
+    throw new API_Exception('Failed to enable all scheduled relationships.');
+  }
+  return civicrm_api3_create_success(1, $params, 'Job', 'enable_scheduled_relationships');
+}
+
+/**
  * This api reloads all the smart groups.
  *
  * If the org has a large number of smart groups it is recommended that they use the limit clause
