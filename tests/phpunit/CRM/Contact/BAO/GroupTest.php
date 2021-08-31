@@ -50,6 +50,28 @@ class CRM_Contact_BAO_GroupTest extends CiviUnitTestCase {
     );
   }
 
+
+  /**
+   * Test discarding (called on delete) a group.
+   */
+  public function testDiscardGroup(): void {
+    $checkParams = $params = [
+      'title' => 'Group Phoneix',
+      'description' => 'All groups must die',
+      'visibility' => 'User and User Admin Only',
+      'is_active' => 1,
+    ];
+    $group = CRM_Contact_BAO_Group::create($params);
+    $group_id = $group->id;
+    $this->assertDBCompareValues(
+      'CRM_Contact_DAO_Group',
+      ['id' => $group_id],
+      $checkParams
+    );
+    CRM_Contact_BAO_Group::discard($group_id);
+    $this->assertDBRowNotExist('CRM_Contact_DAO_Group',$group_id);
+  }
+
   /**
    * Test case to ensure child group is present in the hierarchy
    *  if it has multiple parent groups and not all are disabled.
