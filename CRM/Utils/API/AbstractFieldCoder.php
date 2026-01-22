@@ -58,7 +58,7 @@ abstract class CRM_Utils_API_AbstractFieldCoder implements API_Wrapper {
       return TRUE;
     }
     // Field is multilingual and after cutting off _xx_YY should be skipped (CRM-7230)…
-    if ((preg_match('/_[a-z][a-z]_[A-Z][A-Z]$/', $fldName) && !empty($skipFields[substr($fldName, 0, -6)])) {
+    if ((preg_match('/_[a-z][a-z]_[A-Z][A-Z]$/', $fldName)) && !empty($skipFields[substr($fldName, 0, -6)])) {
       return TRUE;
     }
     // Field can take multiple entries, eg. fieldName[1], fieldName[2], etc.
