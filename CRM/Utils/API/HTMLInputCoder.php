@@ -57,92 +57,92 @@ class CRM_Utils_API_HTMLInputCoder extends CRM_Utils_API_AbstractFieldCoder {
    */
   public function getSkipFields() {
     if (!isset($this->skipFields)) {
-      $this->skipFields = [
-        'widget_code',
-        'html_message',
-        'body_html',
-        'msg_html',
+      $skipFields = [
+        'widget_code' => TRUE,
+        'html_message' => TRUE,
+        'body_html' => TRUE,
+        'msg_html' => TRUE,
         // MessageTemplate subject might contain the < character in a smarty tag
-        'msg_subject',
-        'description',
-        'intro',
-        'thankyou_text',
-        'tf_thankyou_text',
-        'intro_text',
-        'page_text',
-        'body_text',
-        'footer_text',
-        'thankyou_footer',
-        'thankyou_footer_text',
-        'new_text',
-        'renewal_text',
-        'help_pre',
-        'help_post',
-        'confirm_title',
-        'confirm_text',
-        'confirm_footer_text',
-        'confirm_email_text',
-        'event_full_text',
-        'waitlist_text',
-        'approval_req_text',
-        'report_header',
-        'report_footer',
-        'cc_id',
-        'bcc_id',
-        'premiums_intro_text',
-        'honor_block_text',
-        'pay_later_text',
-        'pay_later_receipt',
+        'msg_subject' => TRUE,
+        'description' => TRUE,
+        'intro' => TRUE,
+        'thankyou_text' => TRUE,
+        'tf_thankyou_text' => TRUE,
+        'intro_text' => TRUE,
+        'page_text' => TRUE,
+        'body_text' => TRUE,
+        'footer_text' => TRUE,
+        'thankyou_footer' => TRUE,
+        'thankyou_footer_text' => TRUE,
+        'new_text' => TRUE,
+        'renewal_text' => TRUE,
+        'help_pre' => TRUE,
+        'help_post' => TRUE,
+        'confirm_title' => TRUE,
+        'confirm_text' => TRUE,
+        'confirm_footer_text' => TRUE,
+        'confirm_email_text' => TRUE,
+        'event_full_text' => TRUE,
+        'waitlist_text' => TRUE,
+        'approval_req_text' => TRUE,
+        'report_header' => TRUE,
+        'report_footer' => TRUE,
+        'cc_id' => TRUE,
+        'bcc_id' => TRUE,
+        'premiums_intro_text' => TRUE,
+        'honor_block_text' => TRUE,
+        'pay_later_text' => TRUE,
+        'pay_later_receipt' => TRUE,
         // This is needed for FROM Email Address configuration. dgg
         // TODO: Maybe can be removed now with the migration to "SiteEmailAddress" entity... but who knows if any other entity has a label field that allows html?
-        'label',
+        'label' => TRUE,
         // This is needed for navigation items urls
-        'url',
-        'details',
+        'url' => TRUE,
+        'details' => TRUE,
         // message templates’ text versions
-        'msg_text',
+        'msg_text' => TRUE,
         // (send an) email to contact’s and CiviMail’s text version
-        'text_message',
+        'text_message' => TRUE,
         // data i/p of persistent table
-        'data',
+        'data' => TRUE,
         // CRM-6673
-        'sqlQuery',
-        'pcp_title',
-        'pcp_intro_text',
+        'sqlQuery' => TRUE,
+        'pcp_title' => TRUE,
+        'pcp_intro_text' => TRUE,
         // The 'new' text in word replacements
-        'new',
+        'new' => TRUE,
         // e.g. '"Full Name" <user@example.org>'
-        'replyto_email',
-        'operator',
+        'replyto_email' => TRUE,
+        'operator' => TRUE,
         // CRM-20468
-        'content',
+        'content' => TRUE,
         // CiviCampaign Goal Details
-        'goal_general',
+        'goal_general' => TRUE,
         // https://lab.civicrm.org/dev/core/issues/1286
-        'header',
+        'header' => TRUE,
         // https://lab.civicrm.org/dev/core/issues/1286
-        'footer',
+        'footer' => TRUE,
         // SavedSearch entity
-        'api_params',
+        'api_params' => TRUE,
         // SearchDisplay entity
-        'settings',
+        'settings' => TRUE,
         // SearchSegment items
-        'items',
+        'items' => TRUE,
         // Survey entity
-        'instructions',
+        'instructions' => TRUE,
         // Standalone user fields
-        'username',
-        'password',
-        'hashed_password',
-        'password_reset_token',
+        'username' => TRUE,
+        'password' => TRUE,
+        'hashed_password' => TRUE,
+        'password_reset_token' => TRUE,
       ];
       $custom = CRM_Core_DAO::executeQuery('
         SELECT cf.id, cf.name AS field_name, cg.name AS group_name
         FROM civicrm_custom_field cf, civicrm_custom_group cg
         WHERE cf.custom_group_id = cg.id AND cf.data_type = "Memo"');
       while ($custom->fetch()) {
-        $this->skipFields[] = 'custom_' . $custom->id;
-        $this->skipFields[] = $custom->group_name . '.' . $custom->field_name;
+        $skipFields['custom_' . $custom->id] = TRUE;
+        $skipFields[$custom->group_name . '.' . $custom->field_name] = TRUE;
       }
     }
     return $this->skipFields;

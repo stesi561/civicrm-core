@@ -54,17 +54,17 @@ abstract class CRM_Utils_API_AbstractFieldCoder implements API_Wrapper {
     }
 
     // Field should be skipped
-    if (in_array($fldName, $skipFields)) {
+    if (!empty($skipFields['$fldName'])){
       return TRUE;
     }
     // Field is multilingual and after cutting off _xx_YY should be skipped (CRM-7230)…
-    if ((preg_match('/_[a-z][a-z]_[A-Z][A-Z]$/', $fldName) && in_array(substr($fldName, 0, -6), $skipFields))) {
+    if ((preg_match('/_[a-z][a-z]_[A-Z][A-Z]$/', $fldName) && !empty($skipFields[substr($fldName, 0, -6)])) {
       return TRUE;
     }
     // Field can take multiple entries, eg. fieldName[1], fieldName[2], etc.
     // We remove the index and check again if the fieldName in the list of skipped fields.
     $matches = [];
-    if (preg_match('/^(.*)\[\d+\]/', $fldName, $matches) && in_array($matches[1], $skipFields)) {
+    if (preg_match('/^(.*)\[\d+\]/', $fldName, $matches) && !empty($skipFields[$matches[1]])) {
       return TRUE;
     }
 
